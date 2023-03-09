@@ -27,7 +27,7 @@ const qrcode = require("qrcode");
  */
 
 // Register
-router.post("/register", async (req, res) => {
+router.post("/signup", async (req, res) => {
   // Our register logic starts here
 
   try {
@@ -81,7 +81,7 @@ router.post("/register", async (req, res) => {
  *       200:
  *         description: Successful operation
  */
-router.post("/login", async (req, res) => {
+router.post("/signin", async (req, res) => {
   try {
     // Get user input
     const { email, password } = req.body;
