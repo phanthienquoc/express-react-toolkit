@@ -3,10 +3,12 @@ const router = express.Router();
 
 const app = require("../app");
 const User = require("../model/user");
+const authMethod = require("../auth/auth.methods");
+const AuthenToken = require("../model/authenToken");
 
+const qrcode = require("qrcode");
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
-const qrcode = require("qrcode");
 
 /**
  * @swagger
@@ -35,7 +37,7 @@ router.post("/signup", async (req, res) => {
     const { first_name, last_name, email, password } = req.body;
 
     // Validate user input
-    if (!(email && password && first_name && last_name)) {
+    if (!(email && password)) {
       res.status(400).send("All input is required");
     }
 
@@ -44,7 +46,7 @@ router.post("/signup", async (req, res) => {
     const oldUser = await User.findOne({ email });
 
     if (oldUser) {
-      return res.status(409).send("User Already Exist. Please Login");
+      res.status(409).send("User Already Exist. Please Login");
     }
 
     // Encrypt user password
@@ -59,8 +61,14 @@ router.post("/signup", async (req, res) => {
     });
 
     // Create token
-    const token = jwt.sign({ user_id: user._id, email }, process.env.TOKEN_KEY, {
+    const token = jwt.sign({ user_id: user._id, email }, process.env.ACCESS_TOKEN_SECRET, {
       expiresIn: process.env.TOKEN_EXPIRED,
+    });
+
+    const userToken = await AuthenToken.create({
+      userId: user._id,
+      access_token: token, // sanitize: convert email to lowercase
+      refresh_token: token,
     });
 
     // return new user
@@ -96,21 +104,49 @@ router.post("/signin", async (req, res) => {
 
     if (user && (await bcrypt.compare(password, user.password))) {
       // Create token
-      const token = jwt.sign({ user_id: user._id, email }, process.env.TOKEN_KEY, {
-        expiresIn: process.env.TOKEN_EXPIRED,
-      });
+      const accessToken = authMethod.signAccessToken({ user_id: user._id, email });
+      const refreshToken = authMethod.signRefreshToken({ user_id: user._id, email });
 
-      // save user token
-      user.token = token;
+      await AuthenToken.findOneAndUpdate(
+        { userId: user._id },
+        { $set: { accessToken: accessToken, refreshToken: refreshToken } }
+      );
 
       // user
-      return res.status(200).json({ token });
+      return res.status(200).json({
+        user: {
+          id: user._id,
+          email: user.email,
+          first_name: user.first_name,
+          last_name: user.last_name,
+        },
+        access_token: accessToken,
+        refresh_token: refreshToken,
+      });
     }
     return res.status(400).send("Invalid Credentials");
   } catch (err) {
     console.log("Login", err);
   }
-  // Our login logic ends here
+});
+
+router.post("/refresh-token", async (req, res) => {
+  try {
+    const refreshToken = req.body.refresh_token;
+    if (!refreshToken) {
+      res.status(400).send("refreshToken is required");
+    }
+    const refreshData = await authMethod.refreshToken(refreshToken);
+    if (refreshData) {
+      await authMethod.updateUserTokenData(refreshData);
+      res.status(200).send(refreshData);
+    } else {
+      throw Error("xxx");
+    }
+  } catch (error) {
+    console.log("refresh-token", error);
+    res.status(404).send("Error on init refresh token");
+  }
 });
 
 module.exports = router;

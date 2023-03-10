@@ -1,6 +1,9 @@
 const express = require("express");
+const authMiddleware = require("../auth/auth.middlewares");
 const router = express.Router();
 const User = require("../model/user");
+
+const isAuth = authMiddleware.isAuth;
 /**
  * @swagger
  * tags:
@@ -18,11 +21,17 @@ const User = require("../model/user");
  *       200:
  *         description: Successful operation
  */
-router.get("/users", async (req, res) => {
+router.get("/users", isAuth, async (req, res) => {
   // Get a list of all users
-  const jobs = await User.find();
-
-  res.json(jobs);
+  console.log(req.user);
+  const users = await User.find();
+  const listUser = users.map((user) => ({
+    id: user.id,
+    email: user.email,
+    last_name: user.last_name,
+    first_name: user.first_name,
+  }));
+  res.status(200).json(listUser);
 });
 
 /**

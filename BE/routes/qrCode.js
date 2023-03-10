@@ -35,7 +35,7 @@ router.post("/qr/generate", async (req, res) => {
         userId: user._id,
         email: user.email,
       },
-      process.env.TOKEN_KEY,
+      process.env.ACCESS_TOKEN_SECRET,
       {
         expiresIn: process.env.TOKEN_EXPIRED_DAY,
       }
@@ -58,7 +58,7 @@ router.post("/qr/scan", async (req, res) => {
       res.status(REQUEST_STATUS_CODE[400]).send("Token and device information required");
     }
 
-    const decoded = jwt.verify(token, process.env.TOKEN_KEY);
+    const decoded = jwt.verify(token, process.env.ACCESS_TOKEN_SECRET);
 
     const qrCode = await QRCode.findOne({
       userId: decoded.userId,
@@ -96,7 +96,7 @@ router.post("/qr/scan", async (req, res) => {
     console.log("=====>user");
 
     // Create token
-    const authToken = jwt.sign({ user_id: user._id }, process.env.TOKEN_KEY, {
+    const authToken = jwt.sign({ user_id: user._id }, process.env.ACCESS_TOKEN_SECRET, {
       expiresIn: process.env.TOKEN_EXPIRED,
     });
 
