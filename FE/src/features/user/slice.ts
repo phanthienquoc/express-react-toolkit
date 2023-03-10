@@ -22,7 +22,6 @@ const userSlice = createSlice({
       })
       .addCase(action.iGetAll.fulfilled, (state: any, action) => {
         state.loading = false;
-        state.user = action.payload.user;
         state.access_token = action.payload.access_token;
         state.success = true;
       })

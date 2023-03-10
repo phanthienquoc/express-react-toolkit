@@ -1,27 +1,43 @@
-import React from 'react';
-import Box from '../../core/Box';
+import React, { useEffect } from 'react';
 
-import { Formik, Form, FastField } from 'formik'
-import { signUp } from '../../features/auth/actions'
+import * as Yup from 'yup';
+import Box from '../../core/Box';
+import Button from '../../core/Button';
+import FastField from '../../shareComponent/Formik/FastField';
+
+import { isEmpty, get } from 'lodash';
+import { Formik, Form } from 'formik';
+import { useNavigate } from 'react-router-dom';
+import { signUp } from '../../features/auth/actions';
 import { useAppSelector, useAppDispatch } from '../../store/hooks';
 
+const signUpSchema = Yup.object().shape({
+    email: Yup.string().required().label("Email"),
+    password: Yup.string().required().label("password"),
+})
 
 const SignUp = () => {
+    const navigate = useNavigate()
     const dispatch = useAppDispatch();
-    const { loading, user, access_token, error, success } = useAppSelector((state: any) => state.auth);
+    const { loading, user } = useAppSelector((state: any) => state.auth);
+
+    useEffect(() => {
+        if (!isEmpty(get(user, "access_token"))) {
+            navigate("/")
+        }
+    }, [])
 
     const _handleSubmit = async (data: any) => {
         try {
-            const resultAction: any = await dispatch(signUp(data));
+            await dispatch(signUp(data));
+            navigate("/");
             console.log('Registration successful:', user);
-            // update UI or navigate to another page
         } catch (error) {
             console.log('Registration failed:', error);
-            // show error message or update UI
         }
     }
 
-    console.log(loading, error, success)
+    console.log(user && user.access_token)
 
     return (
         <Formik
@@ -29,53 +45,30 @@ const SignUp = () => {
             initialValues={{
                 email: "",
                 password: "",
-                last_name: "",
-                first_name: "",
             }}
+            validationSchema={signUpSchema}
         >
             {({ values, error }: any) => {
                 return (
-                    <Form>
+                    <Form style={{ display: "flex", flexDirection: "column", minWidth: 360, maxWidth: 420, margin: "0 auto" }}>
                         <Box>
-                            {access_token}
+                            {user.access_token}
                         </Box>
-                        <Box className='form-group'>
-                            <label htmlFor='firstName'>First Name</label>
-                            <FastField
-                                type='text'
-                                className='form-input'
-                                required
-                                name={"first_name"}
-                            />
-                        </Box>
-                        <Box className='form-group'>
-                            <label htmlFor='lastName'>Last Name</label>
-                            <FastField
-                                required
-                                type='text'
-                                name={"last_name"}
-                                className='form-input'
-                            />
-                        </Box>
-                        <Box className='form-group'>
-                            <label htmlFor='email'>Email</label>
-                            <FastField
-                                required
-                                type={"email"}
-                                name={"email"}
-                            />
-                        </Box>
-                        <Box className='form-group'>
-                            <label htmlFor='password'>Password</label>
-                            <FastField
-                                required
-                                type='password'
-                                name={'password'}
-                            />
-                        </Box>
-                        <button type='submit' className='button' disabled={loading}>
+                        <FastField
+                            required
+                            type={"email"}
+                            name={"email"}
+                            label={"Email"}
+                        />
+                        <FastField
+                            required
+                            type='password'
+                            name={'password'}
+                            label={"Password"}
+                        />
+                        <Button type='submit' className='button' disabled={loading || !isEmpty(error)}>
                             {loading ? 'loading' : 'Register'}
-                        </button>
+                        </Button>
                     </Form>
                 )
             }}
