@@ -7,6 +7,7 @@ const auth = require("./routes/auth");
 const users = require("./routes/user");
 const qrCode = require("./routes/qrCode");
 const cronjobs = require("./routes/cronjob");
+const connectedDevice = require("./routes/connectedDevice");
 const swagger = require("./services/swagger");
 
 const app = express();
@@ -18,7 +19,8 @@ app.use("/auth", auth);
 app.use("/swagger", swagger);
 
 app.use("/api", users);
-app.use("/api", cronjobs);
 app.use("/api", qrCode);
+app.use("/api", cronjobs);
+app.use("/api", connectedDevice);
 
 module.exports = app;

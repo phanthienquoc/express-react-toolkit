@@ -1,7 +1,8 @@
 const express = require("express");
-const authMiddleware = require("../auth/auth.middlewares");
 const router = express.Router();
-const User = require("../model/user");
+
+const ItemInterface = require("../model/connectedDevice");
+const authMiddleware = require("../auth/auth.middlewares");
 
 const isAuth = authMiddleware.isAuth;
 /**
@@ -21,17 +22,20 @@ const isAuth = authMiddleware.isAuth;
  *       200:
  *         description: Successful operation
  */
-router.get("/user", isAuth, async (req, res) => {
+router.get("/connected-device", isAuth, async (req, res) => {
   // Get a list of all users
   console.log(req.user);
-  const users = await User.find();
-  const listUser = users.map((user) => ({
-    id: user.id,
-    email: user.email,
-    last_name: user.last_name,
-    first_name: user.first_name,
+  const items = await ItemInterface.find();
+  const listItem = items.map((item) => ({
+    id: item.id,
+    user_id: item.userId,
+    qr_code_id: item.qrCodeId,
+    device_name: item.deviceName,
+    device_model: item.deviceModel,
+    device_os: item.deviceOS,
+    disabled: item.disabled,
   }));
-  res.status(200).json(listUser);
+  res.status(200).json(listItem);
 });
 
 /**
@@ -53,7 +57,7 @@ router.get("/user", isAuth, async (req, res) => {
  *       404:
  *         description: User not found
  */
-router.get("/user/:id", (req, res) => {
+router.get("/connected-device/:id", (req, res) => {
   const id = req.params.id;
   // Get the user with the specified ID
 });
@@ -87,7 +91,7 @@ router.get("/user/:id", (req, res) => {
  *       400:
  *         description: Invalid request body
  */
-router.post("/user", (req, res) => {
+router.post("/connected-device", (req, res) => {
   const { name, email } = req.body;
   // Create a new user with the specified name and email
 });
@@ -130,7 +134,7 @@ router.post("/user", (req, res) => {
  *       400:
  *         description: Invalid request body
  */
-router.put("/user/:id", (req, res) => {
+router.put("/users/:id", (req, res) => {
   const id = req.params.id;
   const { name, email } = req.body;
   // Update the user with the specified ID with the new name and email

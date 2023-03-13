@@ -3,7 +3,7 @@ const router = express.Router();
 
 const CronJob = require("../model/cronjob");
 
-router.post("/cronjobs", async (req, res) => {
+router.post("/cronjob", async (req, res) => {
   const { name, cron, command } = req.body;
   const job = await CronJob.create({ name, cron, command });
   // await job.save();
@@ -14,7 +14,7 @@ router.post("/cronjobs", async (req, res) => {
   res.json({ message: "Job created", data: req.body });
 });
 
-router.get("/cronjobs", async (req, res) => {
+router.get("/cronjob", async (req, res) => {
   const jobs = await CronJob.find();
   res.json(jobs);
 });

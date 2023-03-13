@@ -6,8 +6,21 @@ const QRCode = require("../model/qrCode");
 const User = require("../model/user");
 const ConnectedDevice = require("../model/connectedDevice");
 const { REQUEST_STATUS_CODE } = require("../constants/request");
+const authMiddleware = require("../auth/auth.middlewares");
 
 const router = express.Router();
+const isAuth = authMiddleware.isAuth;
+
+router.get("/qr", isAuth, async (req, res) => {
+  const qrs = await QRCode.find({ userId: req.user.id });
+  const Listqrs = qrs.map((qrCode) => ({
+    id: qrCode.id,
+    user_id: qrCode.userId,
+    is_active: qrCode.isActive,
+    last_used_date: qrCode.lastUsedDate,
+  }));
+  res.status(200).json(Listqrs);
+});
 
 router.post("/qr/generate", async (req, res) => {
   try {
