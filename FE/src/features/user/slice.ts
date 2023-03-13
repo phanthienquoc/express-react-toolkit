@@ -1,4 +1,4 @@
-import { QUERY_KEY_USER } from "../../constants/QueryKey";
+import { QUERY_KEYS } from "./../../constants/QueryKey";
 import { createSlice } from "@reduxjs/toolkit";
 import action from "./actions";
 
@@ -10,7 +10,7 @@ const initialState = {
 };
 
 const userSlice = createSlice({
-  name: QUERY_KEY_USER.NAME,
+  name: QUERY_KEYS.USERS.pathName,
   initialState,
   reducers: {},
   extraReducers: (builder) => {

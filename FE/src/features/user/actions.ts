@@ -1,14 +1,12 @@
 import apiCaller from "../../api";
+import QUERY_KEYS from "../../constants/QueryKey";
 
-import { USER_PATH } from "../../api/path";
 import { createAsyncThunk } from "@reduxjs/toolkit";
-import { QUERY_KEY_USER } from "../../constants/QueryKey";
 
 const registerUserFunc = async (params: any, { rejectWithValue }: any) => {
   try {
-    return apiCaller(USER_PATH, "GET", params);
+    return apiCaller(QUERY_KEYS.USERS.apiPath, "GET", params);
   } catch (error: any) {
-    // return custom error message from backend if present
     if (error.response && error.response.data.message) {
       return rejectWithValue(error.response.data.message);
     } else {
@@ -17,11 +15,11 @@ const registerUserFunc = async (params: any, { rejectWithValue }: any) => {
   }
 };
 
-export const iGet = createAsyncThunk(QUERY_KEY_USER.GET, registerUserFunc);
-export const iAdd = createAsyncThunk(QUERY_KEY_USER.ADD, registerUserFunc);
-export const iUpdate = createAsyncThunk(QUERY_KEY_USER.UPDATE, registerUserFunc);
-export const iDelete = createAsyncThunk(QUERY_KEY_USER.DETELE, registerUserFunc);
-export const iGetAll = createAsyncThunk(QUERY_KEY_USER.GETALL, registerUserFunc);
+export const iGet = createAsyncThunk(QUERY_KEYS.USERS.endpoint.GET, registerUserFunc);
+export const iAdd = createAsyncThunk(QUERY_KEYS.USERS.endpoint.ADD, registerUserFunc);
+export const iUpdate = createAsyncThunk(QUERY_KEYS.USERS.endpoint.UPDATE, registerUserFunc);
+export const iDelete = createAsyncThunk(QUERY_KEYS.USERS.endpoint.DETELE, registerUserFunc);
+export const iGetAll = createAsyncThunk(QUERY_KEYS.USERS.endpoint.GETALL, registerUserFunc);
 
 export default {
   iGet,

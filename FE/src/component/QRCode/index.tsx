@@ -1,14 +1,13 @@
 import React from "react";
+import QUERY_KEYS from "../../constants/QueryKey";
 
 import Box from "../../core/Box";
 import Table from '../../core/Table';
 
-import { useAppSelector } from "../../store/hooks";
-import { useGetAllQuery } from "../../services/user";
+import { useGetAllQuery } from "../../services/qr";
 
-const User = (props: any) => {
-    const { loading, users } = useAppSelector((state: any) => state.user);
-    const { data, error, isLoading } = useGetAllQuery(`users`);
+const QRCode = (props: any) => {
+    const { data, error, isLoading: loading } = useGetAllQuery(QUERY_KEYS.QR_CODE.pathName);
 
     const columns: readonly any[] = [
         {
@@ -17,22 +16,23 @@ const User = (props: any) => {
             minWidth: 100
         },
         {
-            id: 'email',
-            label: 'Email',
-            minWidth: 170
+            id: 'user_id',
+            label: 'User',
+            minWidth: 170,
+            format: (value: number) => value,
         },
         {
-            id: 'first_name',
-            label: 'Population',
+            id: 'is_active',
+            label: 'Active',
+            minWidth: 170,
+        },
+        {
+            id: 'last_used_date',
+            label: 'Last Used',
             minWidth: 170,
             format: (value: number) => value.toLocaleString('en-US'),
         },
-        {
-            id: 'last_name',
-            label: 'Size\u00a0(km\u00b2)',
-            minWidth: 170,
-            format: (value: number) => value.toLocaleString('en-US'),
-        },
+
     ];
     return (
         <Box>
@@ -44,4 +44,4 @@ const User = (props: any) => {
     );
 };
 
-export default User;
+export default QRCode;

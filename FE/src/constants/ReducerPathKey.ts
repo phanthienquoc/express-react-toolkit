@@ -1,0 +1,5 @@
+const REDUCER_PATH_KEY = {
+  CONNECTED_DEVICES: "adminManage_CONNECTED_DEVICES",
+};
+
+export default REDUCER_PATH_KEY;

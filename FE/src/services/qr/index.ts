@@ -1,21 +1,21 @@
 // Need to use the React-specific entry point to import createApi
+import { createApi } from "@reduxjs/toolkit/query/react";
+import { appQuery } from "../../api/apiCaller";
+
 import QUERY_KEYS from "../../constants/QueryKey";
 
-import { appQuery } from "./../../api/apiCaller";
-import { createApi } from "@reduxjs/toolkit/query/react";
-
-interface User {}
+interface QRCode {}
 
 // Define a service using a base URL and expected endpoints
 const api = createApi({
-  reducerPath: QUERY_KEYS.USERS.reducerPath,
+  reducerPath: QUERY_KEYS.QR_CODE.reducerPath,
   baseQuery: appQuery(),
   endpoints: (builder) => ({
     getAll: builder.query({
-      query: (params) => QUERY_KEYS.USERS.pathName,
+      query: (params) => QUERY_KEYS.QR_CODE.pathName,
     }),
-    getById: builder.query<User, string>({
-      query: (name) => `${QUERY_KEYS.USERS.pathName}/${name}`,
+    getById: builder.query<QRCode, string>({
+      query: (name) => `${QUERY_KEYS.QR_CODE.pathName}/${name}`,
     }),
   }),
 });

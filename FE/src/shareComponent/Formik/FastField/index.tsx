@@ -10,7 +10,7 @@ const FastField = (props: any) => {
     return (
         <FormikFastField {...params}>
             {({ field, form: { errors, touched }, }: any) => {
-                console.log(field, errors, touched)
+                // console.log(field, errors, touched)
                 return (
                     <FormControl error={Boolean(touched[field.name]) && !isEmpty(errors[field.name])}>
                         <FormLabel htmlFor={params.name}>

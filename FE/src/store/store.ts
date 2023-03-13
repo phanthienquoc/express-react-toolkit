@@ -1,6 +1,11 @@
 import { configureStore } from "@reduxjs/toolkit";
 import { setupListeners } from "@reduxjs/toolkit/query";
+
+import qrApi from "../services/qr";
 import userApi from "../services/user";
+import notificationApi from "../services/notification";
+import connectedDeviceApi from "../services/connectedDevice";
+
 import authReducer from "../features/auth";
 import userReducer from "../features/user";
 
@@ -9,11 +14,16 @@ const store = configureStore({
     auth: authReducer,
     user: userReducer,
     [userApi.reducerPath]: userApi.reducer,
+    [qrApi.reducerPath]: qrApi.reducer,
+    [notificationApi.reducerPath]: notificationApi.reducer,
+    [connectedDeviceApi.reducerPath]: connectedDeviceApi.reducer,
   },
-  middleware: (getDefaultMiddleware) =>
-    getDefaultMiddleware({
+  middleware: (getDefaultMiddleware) => {
+    const middlewares = [userApi, notificationApi, qrApi, connectedDeviceApi].map((item) => item.middleware);
+    return getDefaultMiddleware({
       serializableCheck: false,
-    }).concat(userApi.middleware),
+    }).concat(middlewares);
+  },
 });
 setupListeners(store.dispatch);
 

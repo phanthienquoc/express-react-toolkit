@@ -1,11 +1,14 @@
 import React, { useEffect } from "react";
 
+import "../App.css"
+
 import Box from "../core/Box";
 import Image from '../core/Image';
 
 import { isEmpty, get } from 'lodash';
 import { useAppSelector } from "../store/hooks";
 import { Outlet, useNavigate, useLocation } from "react-router-dom";
+import Aside from "../component/Aside";
 
 const AppLayout = (props: any) => {
     const navigate = useNavigate();
@@ -19,22 +22,19 @@ const AppLayout = (props: any) => {
     }, [location.pathname])
 
     return (
-        <Box component={"main"}>
+        <React.Fragment>
             <Box component={"header"}>
                 <Image src={"/"} />
             </Box>
             <Box component={"main"}>
-                <Box component={"aside"}>
-                </Box>
+                <Aside />
                 <Box component={"section"}>
-                    <Box component={"article"}>
-                        <Outlet />
-                    </Box>
+                    <Outlet />
                 </Box>
             </Box>
             <Box component={"footer"}>
             </Box>
-        </Box>
+        </React.Fragment>
     );
 };
 

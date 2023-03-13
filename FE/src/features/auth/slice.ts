@@ -40,14 +40,16 @@ const authSlice = createSlice({
         state.loading = false;
         state.user.access_token = action.payload.data.access_token;
         state.user.refresh_token = action.payload.data.refresh_token;
+        state.user.user = action.payload.data.user;
         localStorage.setItem("access_token", action.payload.data.access_token);
         localStorage.setItem("refresh_token", action.payload.data.refresh_token);
 
         state.success = true;
       })
       .addCase(signIn.rejected, (state: any, action) => {
+        console.log(action);
         state.loading = false;
-        state.error = action.payload;
+        state.error = action.error;
         state.success = false;
       });
   },

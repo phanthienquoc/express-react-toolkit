@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 
 import Box from '../../core/Box';
 import Button from '../../core/Button';
@@ -19,7 +19,7 @@ const signInSchema = Yup.object().shape({
 const SignIn = (props: any) => {
     const navigate = useNavigate();
     const dispath = useAppDispatch();
-    const { loading, user } = useAppSelector((state: any) => state.auth)
+    const { loading, user, error } = useAppSelector((state: any) => state.auth)
 
     useEffect(() => {
         if (!isEmpty(get(user, "access_token"))) {
@@ -38,6 +38,9 @@ const SignIn = (props: any) => {
 
     return (
         <Box>
+            <Box color={"red"} style={{ overflow: 'hidden' }}>
+                {JSON.stringify(error)}
+            </Box>
             <Formik
                 onSubmit={_handleSignIn}
                 initialValues={{
@@ -48,9 +51,9 @@ const SignIn = (props: any) => {
             >
                 {({ values, error }: any) => {
                     return (
-                        <Form style={{ display: "flex", flexDirection: "column", minWidth: 360, maxWidth: 420, margin: "0 auto" }}>
+                        <Form style={{ display: "flex", flexDirection: "column", minWidth: 320, maxWidth: 420, margin: "0 auto" }}>
                             <Box>
-                                {user.access_token}
+                                {JSON.stringify(error)}
                             </Box>
                             <FastField
                                 required

@@ -1,14 +1,12 @@
 import apiCaller from "../../api";
+import QUERY_KEYS from "../../constants/QueryKey";
 
-import { AUTH_PATH } from "../../api/path";
 import { createAsyncThunk } from "@reduxjs/toolkit";
-import { QUERY_KEY_AUTHENTICATION } from "../../constants/QueryKey";
 
 const registerUserFunc = async (params: any, { rejectWithValue }: any) => {
   try {
-    return apiCaller(AUTH_PATH.SIGNUP, "POST", params);
+    return apiCaller(QUERY_KEYS.AUTHENTICATION.SIGNUP, "POST", params);
   } catch (error: any) {
-    // return custom error message from backend if present
     if (error.response && error.response.data.message) {
       return rejectWithValue(error.response.data.message);
     } else {
@@ -19,9 +17,8 @@ const registerUserFunc = async (params: any, { rejectWithValue }: any) => {
 
 const signInUserFunc = async (params: any, { rejectWithValue }: any) => {
   try {
-    return apiCaller(AUTH_PATH.SIGNIN, "POST", params);
+    return apiCaller(QUERY_KEYS.AUTHENTICATION.SIGNIN, "POST", params);
   } catch (error: any) {
-    // return custom error message from backend if present
     if (error.response && error.response.data.message) {
       return rejectWithValue(error.response.data.message);
     } else {
@@ -30,5 +27,5 @@ const signInUserFunc = async (params: any, { rejectWithValue }: any) => {
   }
 };
 
-export const signUp = createAsyncThunk(QUERY_KEY_AUTHENTICATION.SIGNUP, registerUserFunc);
-export const signIn = createAsyncThunk(QUERY_KEY_AUTHENTICATION.SIGNIN, signInUserFunc);
+export const signUp = createAsyncThunk(QUERY_KEYS.AUTHENTICATION.SIGNUP, registerUserFunc);
+export const signIn = createAsyncThunk(QUERY_KEYS.AUTHENTICATION.SIGNIN, signInUserFunc);
